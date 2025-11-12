@@ -3,6 +3,7 @@ package org.example.aiproject.Service;
 import lombok.RequiredArgsConstructor;
 import org.example.aiproject.dto.ChatRequest;
 import org.example.aiproject.dto.ChatResponse;
+import org.example.aiproject.dto.Prompt;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
 import reactor.core.publisher.Mono;
@@ -12,14 +13,14 @@ import reactor.core.publisher.Mono;
 public class OpenAiService {
 
     private final WebClient openAiWebClient;
-    private ChatMemoryService memory;
+    private final ChatMemoryService memory;
 
 
-    public Mono<ChatResponse> ask(String prompt, int year) {
-        if (year != 0) {
-            memory.add("system", "Året er " + year + "snak i nutid");
+    public Mono<ChatResponse> ask(Prompt prompt) {
+        if (prompt.year() != 0) {
+            memory.add("system", "Året er " + prompt.year() + "snak i nutid");
         }
-        memory.add("user", prompt);
+        memory.add("user", prompt.prompt());
 
         ChatRequest request = new ChatRequest(
                 "gpt-4o-mini",
