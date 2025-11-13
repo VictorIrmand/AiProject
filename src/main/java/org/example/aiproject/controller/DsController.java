@@ -10,7 +10,10 @@ import reactor.core.publisher.Mono;
 
 import java.util.List;
 import java.util.Map;
-
+@CrossOrigin(
+        origins = "http://localhost:5173",
+        allowCredentials = "true"
+)
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/ds")
@@ -28,7 +31,7 @@ public class DsController {
 
 
     @PostMapping("/areas/{id}/ej67")
-    public Mono<String> fetchE67(@PathVariable String id, @RequestBody Ej67RequestDTO dto) {
+    public Mono<Void> fetchE67(@PathVariable String id, @RequestBody Ej67RequestDTO dto) {
         logger.info("Fetching EJ67 for area {} with years {}–{}", id, dto.startYear(), dto.endYear());
 
         Ej67RequestDTO fullDTO = new Ej67RequestDTO(
@@ -38,7 +41,7 @@ public class DsController {
                 dto.ejendomsKategori()
         );
 
-        return service.loadEJ67(fullDTO);
+        return service.provideOpenAiContext(fullDTO).then();
     }
 
 }
